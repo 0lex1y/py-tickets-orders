@@ -23,9 +23,6 @@ class ActorSerializer(serializers.ModelSerializer):
         model = Actor
         fields = ("id", "first_name", "last_name", "full_name")
 
-    def get_full_name(self, obj: Actor) -> str:
-        return f"{obj.first_name} {obj.last_name}"
-
 
 class CinemaHallSerializer(serializers.ModelSerializer):
     class Meta:
@@ -85,8 +82,8 @@ class MovieSessionListSerializer(MovieSessionSerializer):
         )
 
     def get_ticket_available(self, obj):
-        tickets = Ticket.objects.filter(movie_session=obj)
-        ticket_available = tickets.count()
+        sold = Ticket.objects.filter(movie_session=obj).count()
+        ticket_available = obj.cinema_hall.capacity - sold
         return ticket_available
 
 

@@ -92,12 +92,15 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset
         date_raw = self.request.query_params.get("date")
+        movie_id = self.request.query_params.get("movie")
         if date_raw:
             date_list = date_raw.split(",")
             serializer = FilterSerializer(data={"date": date_list})
             serializer.is_valid(raise_exception=True)
             valid_dates = serializer.validated_data["date"]
             queryset = queryset.filter(show_time__date__in=valid_dates)
+        if movie_id:
+            queryset = queryset.filter(movie_id=movie_id)
         return queryset
 
 
