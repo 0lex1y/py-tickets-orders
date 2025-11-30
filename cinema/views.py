@@ -1,8 +1,5 @@
-from datetime import datetime
-
-from django.db.migrations.serializer import serializer_factory
-from rest_framework import viewsets
-from rest_framework.exceptions import ValidationError
+from rest_framework import viewsets, pagination
+from rest_framework.pagination import PageNumberPagination
 
 from cinema.models import (Genre,
                            Actor,
@@ -22,7 +19,8 @@ from cinema.serializers import (
     MovieSessionDetailSerializer,
     MovieListSerializer,
     OrderListSerializer,
-    OrderCreateSerializer, FilterSerializer
+    OrderCreateSerializer,
+    FilterSerializer
 )
 
 
@@ -104,8 +102,16 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
         return queryset
 
 
+
+class OrderPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
+    pagination_class = OrderPagination
 
     def get_queryset(self):
         queryset = Order.objects.filter(user=self.request.user)
